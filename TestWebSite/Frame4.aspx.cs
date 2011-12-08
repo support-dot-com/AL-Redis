@@ -13,7 +13,13 @@ namespace TestWebSite
         {
             Session["LastPage"] = "Frame4";
             Session["UtcNow"] = DateTime.UtcNow;
-            Session["BigObject"] = new ExponentiallyChunkyThing(4);
+				var bigObj = Session["BigObject"];
+				Session["BigObject"] = null;
+
+				var newBigObj = Session["BigObject"];
+				if (newBigObj != null) {
+					throw new Exception("Null value saved to session but not retrievable");
+				}
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Threading;
 
 namespace TestWebSite
 {
@@ -11,7 +12,8 @@ namespace TestWebSite
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["LastPage"] = "Frame3";
+			  Thread.Sleep(500); 
+			  Session["LastPage"] = "Frame3";
             Session["UtcNow"] = DateTime.UtcNow;
             Session["BigObject"] = new ExponentiallyChunkyThing(5);
         }

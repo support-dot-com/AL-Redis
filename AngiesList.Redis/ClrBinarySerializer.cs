@@ -59,6 +59,7 @@ namespace AngiesList.Redis
                 case TypeCode.DateTime: data = this.SerializeDateTime((DateTime)value); break;
                 case TypeCode.Double: data = this.SerializeDouble((Double)value); break;
                 case TypeCode.Single: data = this.SerializeSingle((Single)value); break;
+					 case TypeCode.Decimal: data = this.SerializeDecimal((Decimal)value); break;
                 default: data = this.SerializeObject(value); break;
             }
 
@@ -133,6 +134,7 @@ namespace AngiesList.Redis
                 case TypeCode.DateTime: return this.DeserializeDateTime(data);
                 case TypeCode.Double: return this.DeserializeDouble(data);
                 case TypeCode.Single: return this.DeserializeSingle(data);
+					 case TypeCode.Decimal: return this.DeserializeDecimal(data);
                 case TypeCode.Object: return this.DeserializeObject(data);
                 default: throw new InvalidOperationException("Unknown TypeCode was returned: " + code);
             }
@@ -204,6 +206,16 @@ namespace AngiesList.Redis
         {
             return new ArraySegment<byte>(BitConverter.GetBytes(value));
         }
+
+		  protected virtual ArraySegment<byte> SerializeDecimal(Decimal value)
+		  {
+			  using (var stream = new MemoryStream()) {
+				  using (var binaryWriter = new BinaryWriter(stream)) {
+					  binaryWriter.Write(value);
+				  }
+				  return new ArraySegment<byte>(stream.ToArray());
+			  }
+		  }
 
         protected virtual ArraySegment<byte> SerializeObject(object value)
         {
@@ -277,6 +289,15 @@ namespace AngiesList.Redis
         {
             return BitConverter.ToSingle(value.Array, value.Offset);
         }
+
+		  protected virtual Decimal DeserializeDecimal(ArraySegment<byte> value)
+		  {
+			  using (var stream = new MemoryStream(value.Array, value.Offset, value.Count)) {
+				  using (var binaryReader = new BinaryReader(stream)) {
+					  return binaryReader.ReadDecimal();
+				  }
+			  }
+		  }
 
         protected virtual object DeserializeObject(ArraySegment<byte> value)
         {

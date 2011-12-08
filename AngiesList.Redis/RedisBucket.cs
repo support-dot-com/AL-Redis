@@ -29,15 +29,10 @@ namespace AngiesList.Redis
 
         private RedisConnection GetConnection()
         {
-            if (connection == null ||
-                connection.State == RedisConnectionBase.ConnectionState.Closing ||
-                connection.State == RedisConnectionBase.ConnectionState.Closed)
-            {
+			  if (connection.NeedsReset()) {
                 lock (bucketName)
                 {
-                    if (connection == null ||
-                        connection.State == RedisConnectionBase.ConnectionState.Closing ||
-                        connection.State == RedisConnectionBase.ConnectionState.Closed)
+                    if (connection.NeedsReset())
                     {
                         if (connection != null) connection.Dispose();
                         connection = new RedisConnection(Host, Port);
@@ -185,6 +180,5 @@ namespace AngiesList.Redis
             }
             return bucketName + ":" + key;
         }
-
     }
 }

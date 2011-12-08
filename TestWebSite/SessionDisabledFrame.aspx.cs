@@ -4,21 +4,16 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Threading;
 
 namespace TestWebSite
 {
-    public partial class Frame1 : System.Web.UI.Page
+    public partial class SessionDisabledFrame : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-			  Thread.Sleep(2000); 
-
-			  Session["LastPage"] = "Frame1";
+            Session["LastPage"] = "ReadonlyFrame";
             Session["UtcNow"] = DateTime.UtcNow;
-            //Session["BigObject"] = new ExponentiallyChunkyThing(3);
-
-				
+            Session["BigObject"] = new ExponentiallyChunkyThing(4);
         }
     }
 }

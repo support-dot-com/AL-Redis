@@ -12,6 +12,15 @@
         LastPage: <%= Session["LastPage"].ToString() %>
         <br />
         UtcNow: <%= ((DateTime)Session["UtcNow"]).ToLongTimeString() +" ."+ ((DateTime)Session["UtcNow"]).Millisecond %>
+        <br />
+        HowBig (shouldn't be zero): <%= ((TestWebSite.ExponentiallyChunkyThing)Session["BigObject"]).HowBig %>
+        <br />
+        NotExplicitlySavedRefObject.BigTexts[0] (should be 'test'): 
+            <%= ((TestWebSite.ExponentiallyChunkyThing)Session["NotExplicitlySavedRefObject"]).BigTexts[0] %>
+        <br />
+        NotExplicitlyGottenRefObject.BigTexts[0] (should be 'test 2'): 
+            <%= ((TestWebSite.ExponentiallyChunkyThing)Session["NotExplicitlyGottenRefObject"]).BigTexts[0]%>
+
     </div>
     </form>
 </body>

@@ -9,6 +9,8 @@
 		LastPage: <%= Session["LastPage"].ToString() %>
         <br />
         UtcNow: <%= ((DateTime)Session["UtcNow"]).ToLongTimeString() +" ."+ ((DateTime)Session["UtcNow"]).Millisecond %>
+        <br />
+        ADecimal: <%= Session["ADecimal"].ToString() %>
 	</form>
     Frame1:
     <iframe width="100%" src="Frame1.aspx"></iframe>
@@ -18,6 +20,10 @@
     <iframe width="100%" src="Frame3.aspx"></iframe>
     Frame4:
     <iframe width="100%" src="Frame4.aspx"></iframe>
+    Redirected:
+    <iframe width="100%" src="Redirected.aspx"></iframe>
+    SessionDisabled:
+    <iframe width="100%" src="SessionDisabledFrame.aspx"></iframe>
     ReadonlyFrame:
     <iframe width="100%" src="ReadonlyFrame.aspx"></iframe>
 </body>

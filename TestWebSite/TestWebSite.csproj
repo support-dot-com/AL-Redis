@@ -54,16 +54,28 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Redirected.aspx" />
+    <Content Include="SessionDisabledFrame.aspx" />
     <Content Include="ReadonlyFrame.aspx" />
     <Content Include="Frame4.aspx" />
     <Content Include="Frame3.aspx" />
     <Content Include="Frame2.aspx" />
     <Content Include="Frame1.aspx" />
     <Content Include="Global.asax" />
-    <Content Include="web.config" />
+    <Content Include="web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Default.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Redirected.aspx.cs">
+      <DependentUpon>Redirected.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SessionDisabledFrame.aspx.cs">
+      <DependentUpon>SessionDisabledFrame.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="ReadonlyFrame.aspx.cs">
       <DependentUpon>ReadonlyFrame.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -104,12 +116,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349C5851-65DF-11DA-9384-00065B846F21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>49285</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl>http://localhost/TestWebSite</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
