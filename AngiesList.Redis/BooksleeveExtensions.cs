@@ -15,14 +15,5 @@ namespace AngiesList.Redis
 				  connection.State != RedisConnectionBase.ConnectionState.Opening);
 		}
 
-		public static IDictionary<string, byte[]> ToEvenOddPairsDictionary(this byte[][] target)
-		{
-			Dictionary<string, byte[]> retVal = new Dictionary<string, byte[]>();
-			for (var i = 0; i < target.Length; i++) {
-				var key = Encoding.ASCII.GetString(target[i]);
-				retVal.Add(key, target[++i]);
-			}
-			return retVal;
-		}
 	}
 }
