@@ -36,8 +36,35 @@ Do the same except in the `httpModules` element in the `system.web` element.
 
 ### Bucketed Key-Value store (`AngiesList.Redis.KeyValueStore`)
 
-...coming soon...  
+Example usage:
 
+```csharp
+var tags = KeyValueStore.Bucket("tags");
+tags.Set("redis", "The swiss army knife data structure server");
+
+var description = tags.GetStringSync("redis");
+```
+
+You can optionally set an expiration (in seconds) when you use `Set`:
+
+```csharp
+KeyValueStore.Bucket("contentCache").Set("about_us", "We're awesome!", 600);
+```
+
+There are more getter methods:
+
+* For binary data (GetRawSync() returns byte[])
+* For whatever type T you want. GetSync<T> returns T and handles the (de)serialization from and to T for you.
+* For callback based async operations, there are asyncronous version of all the Get_ methods. Example:
+
+```csharp
+bigNumbers.Get<Int64>("a_trillion", (num, exc) => {
+  if (exc == null) {
+    //do something with num
+  }
+});
+```
+  
 <br />
 
 ### TODO:
