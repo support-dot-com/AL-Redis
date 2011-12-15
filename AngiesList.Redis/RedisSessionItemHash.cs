@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,7 @@ namespace AngiesList.Redis
 		private IValueSerializer serializer = new ClrBinarySerializer();
 
 		private IDictionary<string, object> persistentValues = new Dictionary<string, object>();
+		private object deserializeLock = new object();
 
 		private const string TYPE_PREFIX = "__CLR_TYPE__";
 		private const string VALUE_PREFIX = "val:";
@@ -66,18 +68,30 @@ namespace AngiesList.Redis
 		private void AddFieldToBaseFromRaw(string name)
 		{
 			AddKeysToBase();
-			if (!GetRawItems().ContainsKey(VALUE_PREFIX + name)) { return; }
+			lock (deserializeLock) {
+				if (!GetRawItems().ContainsKey(VALUE_PREFIX + name)) { return; }
 
-			//var typeName = Encoding.ASCII.GetString(GetRawItems()[TYPE_PREFIX + name]);
-			//var fieldClrType = Type.GetType(typeName);
+				//var typeName = Encoding.ASCII.GetString(GetRawItems()[TYPE_PREFIX + name]);
+				//var fieldClrType = Type.GetType(typeName);
 
-			var bytes = GetRawItems()[VALUE_PREFIX + name];
+				var bytes = GetRawItems()[VALUE_PREFIX + name];
 
-			var valueToAdd = serializer.Deserialize(bytes);
-			var persistentCopy = serializer.Deserialize(bytes);
+				var valueToAdd = serializer.Deserialize(bytes);
+				var persistentCopy = serializer.Deserialize(bytes);
 
-			BaseSet(name, valueToAdd);
-			persistentValues.Add(name, persistentCopy);
+				BaseSet(name, valueToAdd);
+				persistentValues.Add(name, persistentCopy);
+			}
+		}
+
+		private void AddAllFieldsToBaseFromRaw() 
+		{
+			AddKeysToBase();
+			lock (deserializeLock) {
+				foreach (var name in BaseGetAllKeys()) {
+					Get(name);
+				}
+			}
 		}
 
 		private HashSet<string> namesAdded = new HashSet<string>();
@@ -200,6 +214,12 @@ namespace AngiesList.Redis
 				AddKeysToBase();
 				return base.Keys;
 			}
+		}
+
+		public override IEnumerator GetEnumerator()
+		{
+			AddAllFieldsToBaseFromRaw();
+			return base.GetEnumerator();
 		}
 
 		public bool Dirty
