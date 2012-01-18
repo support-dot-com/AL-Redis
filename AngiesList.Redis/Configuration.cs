@@ -8,7 +8,7 @@ using System.Web;
 
 namespace AngiesList.Redis
 {
-    internal class KeyValueStoreConfiguration
+    public class KeyValueStoreConfiguration
     {
         #region Constants
 

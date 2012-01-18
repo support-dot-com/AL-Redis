@@ -178,10 +178,8 @@ namespace AngiesList.Redis
 				SessionStateUtility.RaiseSessionEnd(stateContainer, this, EventArgs.Empty);
 			}
 			else {
-				stateContainer.SessionItems.PersistChangedReferences();
+				stateContainer.WaitOnAllPersistent();
 			}
-
-			Task.WaitAll(stateContainer.SessionItems.SetTasks.ToArray(), 1500);
 
 			SessionStateUtility.RemoveHttpSessionStateFromContext(context);
 		}
