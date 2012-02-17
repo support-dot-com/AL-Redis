@@ -14,35 +14,22 @@ namespace AngiesList.Redis
 	public sealed class RedisSessionStateStore : SessionStateStoreProviderBase
 	{
 		private RedisConnection redisConnection;
-		private SessionStateSection sessionStateConfig;
-		private string host;
-		private int port;
-		private string lockHashKey;
+		
+        private string lockHashKey;
 		private readonly object locker = new { };
 
-		public override void Initialize(string name, NameValueCollection config)
+        private RedisSessionStateConfiguration redisConfig;
+
+        public override void Initialize(string name, NameValueCollection config)
 		{
 			if (String.IsNullOrWhiteSpace(name)) {
 				name = "AspNetSession";
 			}
 			base.Initialize(name, config);
 
+            this.redisConfig = RedisSessionStateConfiguration.GetConfiguration();
+
 			lockHashKey = name + ":LockedSessions";
-
-			sessionStateConfig = (SessionStateSection)WebConfigurationManager.GetSection("system.web/sessionState");
-			var stateConnection = sessionStateConfig.StateConnectionString;
-
-			if (!String.IsNullOrWhiteSpace(stateConnection)) {
-				var stateConnectionParts = sessionStateConfig.StateConnectionString.Split('=', ':');
-				host = stateConnectionParts.ElementAtOrDefault(1) ?? "localhost";
-				var portAsString = stateConnectionParts.ElementAtOrDefault(2) ?? "6379";
-				port = Int32.Parse(portAsString);
-
-			}
-			else {
-				host = "localhost";
-				port = 6379;
-			}
 		}
 
 		private RedisConnection GetRedisConnection()
@@ -54,7 +41,7 @@ namespace AngiesList.Redis
 					if (redisConnection == null ||
 						 (redisConnection.State != RedisConnectionBase.ConnectionState.Open &&
 						  redisConnection.State != RedisConnectionBase.ConnectionState.Opening)) {
-						redisConnection = new RedisConnection(host, port);
+						redisConnection = new RedisConnection(redisConfig.Host, redisConfig.Port);
 						redisConnection.Closed += (object sender, EventArgs e) => {
 							//Debug.WriteLine("redisConnection closed");
 						};
@@ -138,7 +125,7 @@ namespace AngiesList.Redis
 
 				return new SessionStateStoreData(sessionItems,
 					 SessionStateUtility.GetSessionStaticObjects(context),
-					 (int)sessionStateConfig.Timeout.TotalMinutes);
+					 redisConfig.SessionTimeout);
 			}
 		}
 
@@ -189,7 +176,7 @@ namespace AngiesList.Redis
 						}
 						return new SessionStateStoreData(sessionItems,
 								  SessionStateUtility.GetSessionStaticObjects(context),
-								  (int)sessionStateConfig.Timeout.TotalMinutes);
+								  redisConfig.SessionTimeout);
 					}
 					else {
 						rawLockData = redis.Hashes.Get(0, lockHashKey, id).Result;

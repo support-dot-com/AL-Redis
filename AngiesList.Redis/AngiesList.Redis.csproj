@@ -68,6 +68,7 @@
     <Compile Include="BooksleeveExtensions.cs" />
     <Compile Include="Bucket.cs" />
     <Compile Include="RedisSessionItemHash.cs" />
+    <Compile Include="RedisSessionStateConfiguration.cs" />
     <Compile Include="RedisSessionStateModule.cs" />
     <Compile Include="KeyValueStore.cs" />
     <Compile Include="ClrBinarySerializer.cs" />
