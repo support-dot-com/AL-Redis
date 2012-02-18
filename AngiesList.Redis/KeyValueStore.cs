@@ -12,29 +12,44 @@ namespace AngiesList.Redis
 
         private KeyValueStore() { }
 
+        /// <summary>
+        /// Create a bucket using the specified redis connection.
+        /// Note: Breaking API change: passing null,null for host,port 
+        /// no longer reads the config file. Please use Bucket(name) 
+        /// instead.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        /// <returns></returns>
         public static Bucket Bucket(string name, string host, int? port)
         {
-            if (String.IsNullOrEmpty(host) && !port.HasValue)
-            {
-                var config = KeyValueStoreConfiguration.GetConfig();
-                host = config.Host;
-                port = config.Port;
-            }
+            return Bucket(new RedisBucketConfiguration(name, host, port));
+        }
 
-            var poolKey = name + host + port;
+        public static Bucket Bucket(RedisBucketConfiguration config)
+        {
+            var poolKey = config.Name + config.Host + config.Port;
             if (!bucketsPool.ContainsKey(poolKey))
             {
                 lock (locker)
                 {
-                    bucketsPool.TryAdd(poolKey, new RedisBucket(name, host, port));
+                    bucketsPool.TryAdd(poolKey, new RedisBucket(config.Name, config.Host, config.Port));
                 }
             }
             return bucketsPool[poolKey];
         }
 
+        /// <summary>
+        /// Read the default configuration file for host/port
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static Bucket Bucket(string name)
         {
-            return Bucket(name, null, null);
+            var config = (RedisBucketConfiguration)RedisConfiguration.ReadConfigFile();
+            config.Name = name;
+            return Bucket(config);
         }
     }
 }

@@ -15,14 +15,12 @@ namespace AngiesList.Redis
     /// PreApplicationStartMethodAttribute to programmatically configure the session
     /// state provider.
     /// </summary>
-    public class RedisSessionStateConfiguration
+    public class RedisSessionStateConfiguration : RedisConfiguration 
     {
         #region Singleton
-        private RedisSessionStateConfiguration()
+        private RedisSessionStateConfiguration() : base()
         { 
             CookieMode = HttpCookieMode.UseCookies;
-            Host = "localhost";
-            Port = 6379;
             SessionTimeout = 60;
         }
 
@@ -40,15 +38,6 @@ namespace AngiesList.Redis
         /// </summary>
         public int SessionTimeout { get; set; }
 
-        /// <summary>
-        /// Hostname of redis server. Defaults to localhost.
-        /// </summary>
-        public string Host { get; set; }
-
-        /// <summary>
-        /// Port number of redis server. Defaults to 6379.
-        /// </summary>
-        public int Port { get; set; }
         #endregion
 
 
