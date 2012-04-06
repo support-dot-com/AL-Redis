@@ -7,6 +7,9 @@ namespace AngiesList.Redis
 {
     public abstract class Bucket
     {
+        /// <summary>
+        /// The bucket name
+        /// </summary>
         public string Name { get; private set; }
 
         public Bucket(string name)

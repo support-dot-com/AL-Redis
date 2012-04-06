@@ -8,34 +8,33 @@ namespace AngiesList.Redis
 {
     public class RedisBucket : Bucket, IDisposable
     {
-        const string DEFHOST = "127.0.0.1";
-        const int DEFPORT = 6379;
+        public RedisBucketConfiguration redisConfig;
 
-        public string Host { get; private set; }
-        public int Port { get; private set; }
-
-        private readonly string bucketName;
         private RedisConnection connection;
         private IValueSerializer cacheItemSerializer;
 
-        public RedisBucket(string name, string host = DEFHOST, int? port = DEFPORT)
-            : base(name)
+        public RedisBucket(string name, string host, int? port)
+            : this(new RedisBucketConfiguration(name, host, port))
+        {            
+        }
+
+        public RedisBucket(RedisBucketConfiguration config)
+            : base(config.Name)
         {
-            Host = host ?? DEFHOST;
-            Port = port ?? DEFPORT;
-            bucketName = name;
+            redisConfig = config;
             cacheItemSerializer = new ClrBinarySerializer();
         }
 
+        private object _getConnectionLock = new object();
         private RedisConnection GetConnection()
         {
 			  if (connection.NeedsReset()) {
-                lock (bucketName)
+                  lock (_getConnectionLock)
                 {
                     if (connection.NeedsReset())
                     {
                         if (connection != null) connection.Dispose();
-                        connection = new RedisConnection(Host, Port);
+                        connection = new RedisConnection(redisConfig.Host, redisConfig.Port);
                         connection.Open();
                         connection.Closed += (obj, args) => {
                             GetConnection();
@@ -174,11 +173,11 @@ namespace AngiesList.Redis
 
         private string KeyForBucket(string key)
         {
-            if (key.StartsWith(bucketName + ":"))
+            if (key.StartsWith(Name + ":"))
             {
                 return key;
             }
-            return bucketName + ":" + key;
+            return Name + ":" + key;
         }
     }
 }
