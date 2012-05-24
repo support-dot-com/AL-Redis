@@ -27,6 +27,11 @@ namespace AngiesList.Redis
             return Bucket(new RedisBucketConfiguration(name, host, port));
         }
 
+        /// <summary>
+        /// Create Bucket from RedisBucketConfiguration
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
         public static Bucket Bucket(RedisBucketConfiguration config)
         {
             var poolKey = config.Name + config.Host + config.Port;
@@ -47,8 +52,7 @@ namespace AngiesList.Redis
         /// <returns></returns>
         public static Bucket Bucket(string name)
         {
-            var config = (RedisBucketConfiguration)RedisConfiguration.ReadConfigFile();
-            config.Name = name;
+            var config = new RedisBucketConfiguration(RedisConfiguration.ReadConfigFile(),name);
             return Bucket(config);
         }
     }

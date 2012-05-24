@@ -63,12 +63,17 @@ namespace AngiesList.Redis
             var node = xmlDoc.SelectSingleNode(SETTINGS_SECTION);
 
             var config = new RedisConfiguration();
-            if (node.Attributes["host"] != null)
-                config.Host = node.Attributes["host"].Value;
-
-            if (node.Attributes["port"] != null)
+            if (node != null && node.Attributes != null)
             {
-                config.Port = Int32.Parse(node.Attributes["port"].Value);
+                if (node.Attributes["host"] != null)
+                {
+                    config.Host = node.Attributes["host"].Value;
+                }
+
+                if (node.Attributes["port"] != null)
+                {
+                    config.Port = Int32.Parse(node.Attributes["port"].Value);
+                }
             }
 
 
