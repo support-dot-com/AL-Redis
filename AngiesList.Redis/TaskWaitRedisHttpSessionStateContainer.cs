@@ -28,6 +28,7 @@ namespace AngiesList.Redis
 		public bool WaitOnAllPersistent()
 		{
 			SessionItems.PersistChangedReferences();
+      SessionItems.OneTimeResetTimeout();
 			return Task.WaitAll(SessionItems.SetTasks.ToArray(), 1500);
 		}
 	}

@@ -45,7 +45,9 @@ namespace AngiesList.Redis
 		{
 			if (rawItems == null) {
 				rawItems = redis.Hashes.GetAll(0, GetKeyForSession()).Result;
-				OneTimeResetTimeout();
+        if (rawItems != null && rawItems.Any()) {
+          OneTimeResetTimeout();
+        }
 			}
 			return rawItems;
 		}
@@ -170,7 +172,7 @@ namespace AngiesList.Redis
 		}
 
 		private bool timeoutReset;
-		private void OneTimeResetTimeout()
+		internal void OneTimeResetTimeout()
 		{
 			if (!timeoutReset) {
 				redis.Keys.Expire(0, GetKeyForSession(), timeoutMinutes * 60);
